@@ -4,32 +4,29 @@ import cv2
 import math
 
 # Read input and get corners of aruco
-img = cv2.imread('../Images/slaba.jpg')
+img = cv2.imread('../Images/20230629_142615.jpg')
 hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-l_b = np.array([0, 0, 188])
-u_b = np.array([255, 255, 249])
+l_b = np.array([0, 20, 124])
+u_b = np.array([255, 255, 255])
 mask = cv2.inRange(hsv, l_b, u_b)
 contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-if len(contours) > 0:
-    # Find the index of the largest contour
-    largest_contour_index = max(range(len(contours)), key=lambda i: cv2.contourArea(contours[i]))
-    largest_contour = contours[largest_contour_index]
-
-    epsilon = 0.02 * cv2.arcLength(largest_contour, True)
-    approx = cv2.approxPolyDP(largest_contour, epsilon, True)
+for contour in contours:
+    epsilon = 0.02 * cv2.arcLength(contour, True)
+    approx = cv2.approxPolyDP(contour, epsilon, True)
 
     # Check if the contour has four vertices (a rectangle)
     if len(approx) == 4:
-        # Draw the rectangle around the largest contour
-        x, y, w, h = cv2.boundingRect(approx)
-        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        # Draw the contours on the original image
+        cv2.drawContours(img, [approx], 0, (0, 255, 0), 2)
+
+        # Get the four corners of the rect
         corners = approx.reshape(-1, 2)
-        print(corners)
 
 hh, ww = img.shape[:2]
 
-# Specify input coordinates for corners of quadrilateral in order TL, TR, BR, BL as x, y
+# Specify input coordinates for corners of red quadrilateral in order TL, TR, BR, BL as x, y
 input = np.float32([corners[1],corners[0],corners[3],corners[2]])
+
 
 # Get top and left dimensions and set them as the width and height of the output rectangle
 width = round(math.hypot(input[0, 0] - input[1, 0], input[0, 1] - input[1, 1]))
@@ -40,8 +37,7 @@ print("width:", width, "height:", height)
 x = input[0, 0]
 y = input[0, 1]
 
-
-# Specify output coordinates for corners of quadrilateral in order TL, TR, BR, BL as x, y
+# Specify output coordinates for corners of red quadrilateral in order TL, TR, BR, BL as x, y
 output = np.float32([[0, 0], [width - 1, 0], [width - 1, height - 1], [0, height - 1]])
 
 # Compute perspective matrix

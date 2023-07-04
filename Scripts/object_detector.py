@@ -9,8 +9,8 @@ class HomogeneousBgDetector():
     def detect_objects(self, frame):
         # Convert Image to grayscale
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        l_b = np.array([0, 12, 51])
-        u_b = np.array([15, 255, 255])
+        l_b = np.array([0, 20, 124])
+        u_b = np.array([255, 255, 255])
 
         # Create a Mask with adaptive threshold
         mask = cv2.inRange(hsv, l_b, u_b)
@@ -19,7 +19,7 @@ class HomogeneousBgDetector():
         denoised = cv2.medianBlur(closing, 5)
 
         # Find contours
-        contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours, hierarchy = cv2.findContours(denoised, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
 
 

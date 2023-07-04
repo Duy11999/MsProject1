@@ -18,7 +18,7 @@ corners,_,_ = cv2.aruco.detectMarkers(img, aruco_dict, parameters=parameters)
 
 # Aruco Perimeter
 aruco_perimeter = cv2.arcLength(corners[0], True)
-# Pixel to cm ratio
+# Pixel to mm ratio
 pixel_cm_ratio = aruco_perimeter / 400
 
 #Draw Polygon around marker

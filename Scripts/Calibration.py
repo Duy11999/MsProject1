@@ -76,7 +76,7 @@ pickle.dump(dist, open( "dist.pkl", "wb" ))
 
 ############## UNDISTORTION #####################################################
 
-img1 = cv.imread('../Images/20230626_172306.jpg')
+img1 = cv.imread('../Images/20230629_142615.jpg')
 h, w = img1.shape[:2]
 newCameraMatrix, roi = cv.getOptimalNewCameraMatrix(cameraMatrix, dist, (w,h), 1, (w,h))
 
