@@ -1,12 +1,20 @@
-# python3 Calculate_dimension.py
 import cv2
 from object_detector import *
 import numpy as np
 import imutils
-
+from PIL import Image
 
 #Load Object Detector
 detector = HomogeneousBgDetector()
+
+def resize_by_ratio(image, height1):
+    height, width = image.shape[:2]
+    ratio = height / width
+    new_width = int(height1 / ratio)
+    new_height = height1
+
+    resized_image = cv2.resize(image, (new_width, new_height))
+    return resized_image
 
 def detect_aruco_corners(img, aruco_type):
     # Define names of each possible ArUco tag OpenCV supports
@@ -37,7 +45,9 @@ def detect_aruco_corners(img, aruco_type):
     # Load the input image from disk and resize it
     print("[INFO] Loading image...")
     image = cv2.imread(img)
-    image = imutils.resize(image, width=600)
+    #resized_ratio = 0.5  # Resize image to 50% of its original size
+    image = resize_by_ratio(image, 1500)
+    #image = imutils.resize(image, width=600)
 
     # Verify that the supplied ArUCo tag exists and is supported by OpenCV
     if ARUCO_DICT.get(aruco_type, None) is None:
@@ -87,7 +97,10 @@ def detect_aruco_corners(img, aruco_type):
     return None
 
 # Example usage
-img = cv2.imread('../Images/a(1).jpg')
+img = "../Images/a(1).jpg"
+
+#img = resize_by_ratio(img, 800)
+
 aruco_type = "DICT_5X5_50"
 
 chosen_marker_corners = detect_aruco_corners(img, aruco_type)
@@ -99,45 +112,62 @@ if chosen_marker_corners is not None:
     aruco_perimeter = cv2.arcLength(chosen_marker_corners, True)
 
     # Calculate the pixel-to-millimeter ratio
-    pixel_cm_ratio = aruco_perimeter / 400
+    pixel_mm_ratio = aruco_perimeter / 400
 
-    print(pixel_cm_ratio)
+    print(pixel_mm_ratio)
 else:
     print("No marker detected or invalid marker ID chosen.")
 
-img = cv2.imread('../Images/a(1).jpg')
+img = cv2.imread("../Images/a(1).jpg")
+# resize image to match with resized ratio
+img = resize_by_ratio(img, 1500)
 #Draw Polygon around marker
 int_conners = np.intp(chosen_marker_corners)
-cv2.polylines(img,int_conners,True, (200,255,0),3)
+cv2.polylines(img,int_conners,True, (110, 115, 188), 5)
 
 contours = detector.detect_objects(img)
-cv2.namedWindow('image1', cv2.WINDOW_NORMAL)
-cv2.imshow("image1",img)
+#cv2.namedWindow('image1', cv2.WINDOW_NORMAL)
+#cv2.imshow("image1",img)
 
 
-#Draw objects boundaries:
-for cnt in contours:
-    # Get rect
-    rect = cv2.minAreaRect(cnt)
-    (x,y), (w,h), angle = rect # width and height in pixel of object on image
+if len(contours) > 0:
+    # Find the index of the largest contour
+    largest_contour_index = max(range(len(contours)), key=lambda i: cv2.contourArea(contours[i]))
+    largest_contour = contours[largest_contour_index]
 
-    #Get Width and Height of Objects by applying Ration pixel to cm
-    object_width = w/pixel_cm_ratio
-    object_height = h/pixel_cm_ratio
+    epsilon = 0.02 * cv2.arcLength(largest_contour, True)
+    approx = cv2.approxPolyDP(largest_contour, epsilon, True)
 
-    #Display rectangle
-    box = cv2.boxPoints(rect)
-    box = np.intp(box) # array contains 4 coordinates of 4 corners
-    # Draw polygons
-    cv2.circle(img, (int(x), int(y)), 5, (0, 0, 255), -2)
-    cv2.polylines(img, [box], True, (255, 126, 0), 3)
-    cv2.namedWindow('img2', cv2.WINDOW_NORMAL)
-    cv2.imshow("img2", img)
-    print(object_height)
-    print(object_width)
+    # Check if the contour has four vertices (a rectangle)
+    if len(approx) == 4:
+        # Draw the rectangle around the largest contour
+        x, y, w, h = cv2.boundingRect(approx)
+        cv2.rectangle(img, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-    cv2.putText(img, "Width {}".format(round(object_width,3)), (int(x),int(y)-20), cv2.FONT_HERSHEY_PLAIN,1,(255,216,235),2)
-    cv2.putText(img, "Height {}".format(round(object_height,3)), (int(x),int(y)+20), cv2.FONT_HERSHEY_PLAIN,1,(255,216,235),2)
+        corners = approx.reshape(-1, 2)
+        object_width = w / pixel_mm_ratio
+        object_height = h / pixel_mm_ratio
+        print(object_height)
+        print(object_width)
+
+        center_x = x + (w // 2)
+        center_y = y + (h // 2)
+
+        # Display Width and Height on the center of the box
+        text = "Width: {:.2f}".format(object_width)
+        text_size, _ = cv2.getTextSize(text, cv2.FONT_HERSHEY_PLAIN, 1, 2)
+        text_x = center_x - (text_size[0] // 2)
+        text_y = center_y
+        cv2.putText(img, text, (text_x, text_y-35), cv2.FONT_HERSHEY_PLAIN, 1, (0,0,0), 2)
+
+        text = "Height: {:.2f}".format(object_height)
+        text_size, _ = cv2.getTextSize(text,cv2.FONT_HERSHEY_PLAIN, 1, 2)
+        text_x = center_x - (text_size[0] // 2)
+        text_y = center_y + text_size[1] + 5
+        cv2.putText(img, text, (text_x, text_y-35), cv2.FONT_HERSHEY_PLAIN, 1, (0,0,0), 2)
+
+        # Draw red circle at the center of the box
+        cv2.circle(img, (center_x, center_y), 3, (0, 0, 255), -1)
 
 cv2.namedWindow('Image', cv2.WINDOW_NORMAL)
 cv2.imshow("Image", img)

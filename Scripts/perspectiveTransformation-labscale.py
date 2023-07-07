@@ -4,10 +4,10 @@ import cv2
 import math
 
 # Read input and get corners of aruco
-img = cv2.imread('../Images/20230629_142615.jpg')
+img = cv2.imread('../Images/a(1).jpg')
 hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-l_b = np.array([0, 20, 124])
-u_b = np.array([255, 255, 255])
+l_b = np.array([0, 16, 0])
+u_b = np.array([78, 255, 255])
 mask = cv2.inRange(hsv, l_b, u_b)
 contours, hierarchy = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 for contour in contours:

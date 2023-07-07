@@ -27,7 +27,7 @@ ARUCO_DICT = {
 
 
 aruco_type = "DICT_5X5_50"
-id = 2
+id = 3
 
 arucoDict = cv2.aruco.getPredefinedDictionary(ARUCO_DICT[aruco_type])
 
@@ -38,8 +38,8 @@ cv2.aruco.generateImageMarker(arucoDict, id, tag_size, tag, 1)
 
 # Save the tag g
 # generated
-tag_name = "arucoMarkers/" + aruco_type + "_" + str(id) + ".png"
-cv2.imwrite(tag_name, tag)
+#tag_name = "arucoMarkers/" + aruco_type + "_" + str(id) + ".png"
+cv2.imwrite("arucoMarkers/" + aruco_type + "_" + str(id) + ".jpg", tag)
 cv2.imshow("ArUCo Tag", tag)
 
 cv2.waitKey(0)
