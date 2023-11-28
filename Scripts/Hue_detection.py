@@ -1,3 +1,4 @@
+# python3 Hue_detection.py
 import cv2
 import numpy as np
 
@@ -13,7 +14,7 @@ cv2.createTrackbar("US", "Tracking", 255, 255, nothing)
 cv2.createTrackbar("UV", "Tracking", 255, 255, nothing)
 
 while True:
-    frame = cv2.imread("../Images/a(1).jpg")
+    frame = cv2.imread("../Images/Pocket3-Trans.jpg")
 
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 

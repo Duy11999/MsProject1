@@ -1,3 +1,4 @@
+#Env Test1
 # python3 Calculate_dimension.py
 import cv2
 from object_detector import *
@@ -12,10 +13,10 @@ aruco_dict = cv2.aruco.getPredefinedDictionary(cv2.aruco.DICT_5X5_50)
 #Load Object Detector
 detector = HomogeneousBgDetector()
 #Load the image
-img = cv2.imread("../Images/a(1).jpg")
+img = cv2.imread("../Images/W2.jpg")
 #Get Aruco marker
 corners,_,_ = cv2.aruco.detectMarkers(img, aruco_dict, parameters=parameters)
-
+print(corners)
 # Aruco Perimeter
 aruco_perimeter = cv2.arcLength(corners[0], True)
 # Pixel to mm ratio
