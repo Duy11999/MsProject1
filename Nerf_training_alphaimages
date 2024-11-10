@@ -1,0 +1,48 @@
+Command to train Nerf with alpha images:
+ns-train nerfacto --data /home/shm/Duy/3D-2D-Projection/train_alpha --output-dir /home/shm/Duy/3D-2D-Projection/train-alpha-output --pipeline.datamanager.masks-on-gpu True --pipeline.datamanager.train-num-rays-per-batch 8192 --pipeline.datamanager.eval-num-rays-per-batch 4096 --pipeline.datamanager.pixel-sampler.num-rays-per-batch 8192 --pipeline.model.hidden-dim 128 --pipeline.model.hidden-dim-color 128 --pipeline.model.proposal-net-args-list.0.max-res 256 --pipeline.model.max-res 8192 --pipeline.model.background-color random --pipeline.model.disable-scene-contraction True --pipeline.model.num-proposal-samples-per-ray 512 256 --pipeline.model.num-nerf-samples-per-ray 128 --pipeline.model.distortion-loss-mult 0 --max-num-iterations 200000 --pipeline.model.predict-normals True nerfstudio-data --data /home/shm/Duy/3D-2D-Projection/train_alpha/images --downscale_factor 4 --auto-scale-poses True --scene-scale 1.0 --train-split-fraction 1.0 --load_3D_points True
+
+ns-export pointcloud --load-config /home/ali/nerfstudio/Processed_data/Bricon_Bridge/Outputs/Nerf_3Drecon/TestReg_4/image_alpha_mod2_2/Bricon_Bridge/nerfacto/2024-10-19_153413/config.yml --output-dir /home/ali/nerfstudio/Processed_data/Bricon_Bridge/Outputs/pcd_extraction/pcd_Test4/pcd_alphaimages_reg_mod2_2/Density_10M --num-points 10000000 --remove-outliers True --normal-method open3d --use_bounding_box True --save-world-frame False
+
+ns-train nerfacto --data /home/shm/Duy/3D-2D-Projection/train_alpha \
+--output-dir /home/shm/Duy/3D-2D-Projection/train-alpha-output \
+--pipeline.datamanager.masks-on-gpu True \
+--pipeline.datamanager.train-num-rays-per-batch 4096 \
+--pipeline.datamanager.eval-num-rays-per-batch 2048 \
+--pipeline.datamanager.pixel-sampler.num-rays-per-batch 4096 \
+--pipeline.model.hidden-dim 128 \
+--pipeline.model.hidden-dim-color 128 \
+--pipeline.model.proposal-net-args-list.0.max-res 128 \
+--pipeline.model.max-res 4096 \
+--pipeline.model.background-color random \
+--pipeline.model.disable-scene-contraction True \
+--pipeline.model.num-proposal-samples-per-ray 256 128 \
+--pipeline.model.num-nerf-samples-per-ray 64 \
+--pipeline.model.distortion-loss-mult 0 \
+--max-num-iterations 20000 \
+--pipeline.model.predict-normals True \
+nerfstudio-data --data /home/shm/Duy/3D-2D-Projection/train_alpha/images_4 \
+--downscale_factor 4 \
+--auto-scale-poses True \
+--scene-scale 1.0 \
+--train-split-fraction 1.0 \
+--load_3D_points True
+
+ns-export poisson --load-config /home/shm/Duy/3D-2D-Projection/train_alpha/process_image_2/nerfacto/2024-10-25_232400/config.yml --output-dir exports/mesh/ --target-num-faces 50000 --num-pixels-per-side 2048 --num-points 1000000 --remove-outliers True --normal-method open3d 
+
+ns-process-data images --data /home/shm/Duy/3D-2D-Projection/SteelGirderImages --output-dir SteelGirderImages/train_alpha --matching-method exhaustive --sfm-tool hloc --feature-type superpoint_max --matcher-type superglue --use-sfm-depth
+
+ns-train nerfacto --data /home/shm/Duy/3D-2D-Projection/train_alpha \
+--output-dir /home/shm/Duy/3D-2D-Projection/train-alpha-output \
+--pipeline.datamanager.masks-on-gpu True \
+--pipeline.model.background-color random \
+--pipeline.model.disable-scene-contraction True \
+--max-num-iterations 100000 \
+--pipeline.model.predict-normals True \
+nerfstudio-data --data /home/shm/Duy/3D-2D-Projection/train_alpha/images_8 \
+--downscale_factor 8 \
+--center_method none \
+--orientation_method none \
+--auto-scale-poses True \
+--scene-scale 1.0 \
+--train-split-fraction 1.0 \
+--load_3D_points True
