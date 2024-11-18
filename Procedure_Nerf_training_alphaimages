@@ -1,0 +1,11 @@
+Command to train Nerf with alpha images:
+
+step 1: ns process with original data
+Step 2: segment alpha images using dino sam
+
+Step 3: go to colmap folder from nerf, create for example (images_2), resize the alpha images to images_2_original. 
+
+step 4:run the command below, change nerfstudio-data --data Processed_data/Bricon_Bridge/images_2 (correct data_path). 
+ns-train nerfacto --data /home/ali/nerfstudio/Processed_data/Bricon_Bridge --output-dir /home/ali/nerfstudio/Processed_data/Bricon_Bridge/Outputs/Nerf_3Drecon/TestReg_4/image_alpha_mod2_2 --pipeline.datamanager.masks-on-gpu True --pipeline.datamanager.train-num-rays-per-batch 8192 --pipeline.datamanager.eval-num-rays-per-batch 4096 --pipeline.datamanager.pixel-sampler.num-rays-per-batch 8192 --pipeline.model.hidden-dim 128 --pipeline.model.hidden-dim-color 128 --pipeline.model.proposal-net-args-list.0.max-res 256 --pipeline.model.max-res 8192 --pipeline.model.background-color random --pipeline.model.disable-scene-contraction True --pipeline.model.num-proposal-samples-per-ray 512 256 --pipeline.model.num-nerf-samples-per-ray 128 --pipeline.model.distortion-loss-mult 0 --max-num-iterations 200000 --pipeline.model.predict-normals True nerfstudio-data --data Processed_data/Bricon_Bridge/images_2 --downscale_factor 2 --auto-scale-poses True --scene-scale 1.0 --train-split-fraction 1.0 --load_3D_points True
+
+ns-export pointcloud --load-config /home/ali/nerfstudio/Processed_data/Bricon_Bridge/Outputs/Nerf_3Drecon/TestReg_4/image_alpha_mod2_2/Bricon_Bridge/nerfacto/2024-10-19_153413/config.yml --output-dir /home/ali/nerfstudio/Processed_data/Bricon_Bridge/Outputs/pcd_extraction/pcd_Test4/pcd_alphaimages_reg_mod2_2/Density_10M --num-points 10000000 --remove-outliers True --normal-method open3d --use_bounding_box True --save-world-frame False
