@@ -1,0 +1,30 @@
+Step 1: obtaining tranformation.json using command.
+ns-process-data images --data /home/d8/3D-2D-Projection/SteelGirderImages --output-dir /home/d8/nerfstudio/output --matching-method exhaustive --sfm-tool hloc --feature-type superpoint_max --matcher-type superglue --use-sfm-depth
+
+Step 2: Run the code Georaystation2mod_colmap.ipynb with 3 cases:
+		latitude (S)   Longtitude   Attitude
+	(1)	 - S		  +W           +
+	(2)	  -S		  -E		+
+	(3)	  -S		  -E		-
+
+Get the	geo_coordinates_*.txt and  ecef_coordinates_*.txt
+
+Step 3:  Run this command with the change of geo_coordinate. The output will be chose by the least mean
+ 
+colmap model_aligner \
+    --input_path /home/d8/nerfstudio/output/colmap/sparse/0 \
+    --output_path /home/d8/3D-2D-Projection/Georegistratio/output_georegistration \
+    --ref_images_path /home/d8/3D-2D-Projection/Georegistratio/Coordinates_data/geo_coordinates_1.txt \
+    --ref_is_gps 1 \
+    --alignment_type ecef \
+    --alignment_max_error 3.0
+
+Step 4: Paste the file output the correct locations from step 1 to get the geogeristrationed tranforms
+
+ns-process-data images --data /home/d8/3D-2D-Projection/SteelGirderImages --output-dir /home/d8/nerfstudio/output_georegistration --matching-method exhaustive --sfm-tool hloc --feature-type superpoint_max --matcher-type superglue --use-sfm-depth --skip-colmap --skip-image-processing --colmap-model-path /home/d8/3D-2D-Projection/Georegistratio/output_georegistration
+
+Step 5: Train it with ns train
+
+Step 6: Looking for the file dataparser_transform.json on the output nerf. Run it with the code: Convert_nerf_to_world.ipynb to convert it to world coordinate
+
+

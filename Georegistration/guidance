@@ -1,0 +1,11 @@
+Georegisteration COlmap: 
+ 
+colmap model_aligner \
+>     --input_path /home/d8/nerfstudio/output/colmap/sparse/0 \
+>     --output_path /home/d8/3D-2D-Projection/Georegistratio/output_georegistration \
+>     --ref_images_path /home/d8/3D-2D-Projection/Georegistratio/Coordinates_data/geo_coordinates_3.txt \
+>     --ref_is_gps 1 \
+>     --alignment_type ecef \
+>     --alignment_max_error 3.0
+
+ns-process-data images --data /home/ali/nerfstudio_23/data/nerfstudio/SteelGirder/Girder_Images --output-dir /home/ali/nerfstudio/Processed_data/Bricon_Bridge/Test_Duy --matching-method exhaustive --sfm-tool hloc --feature-type superpoint_max --matcher-type superglue --use-sfm-depth --skip-colmap --skip-image-processing --colmap-model-path /home/ali/nerfstudio/Processed_data/Bricon_Bridge/Test_Duy/Georegistered_Model
