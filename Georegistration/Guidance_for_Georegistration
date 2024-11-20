@@ -3,7 +3,7 @@ ns-process-data images --data /home/d8/3D-2D-Projection/SteelGirderImages --outp
 
 Step 2: Run the code Georaystation2mod_colmap.ipynb with 3 cases:
 		latitude (S)   Longtitude   Attitude
-	(1)	 - S		  +W           +
+	(1)	 - S		  -W           +
 	(2)	  -S		  -E		+
 	(3)	  -S		  -E		-
 
